@@ -51,7 +51,13 @@ def update_concert_overview():
 #title label
 concert_name_lbl = Label(root, text="Current Concerts", font="avenir 16 bold", justify=LEFT)
 concert_name_lbl.grid(row=0, column = 0, columnspan = 4)
-        
+
+#sub headings
+concert_name_lbl = Label(root, text="Concert Name", font="avenir 12 bold underline").grid(row=1, column = 0)
+concert_cap_lbl  = Label(root, text="Capacity",  font="avenir 12 bold underline").grid(row=1, column = 1)
+concert_aval_lbl = Label(root, text="Available", font="avenir 12 bold underline").grid(row=1, column = 2)
+concert_cost_lbl = Label(root, text="Cost",      font="avenir 12 bold underline").grid(row=1, column = 3)
+
 #set up the undynamic label
 concert_overview_name = StringVar()
 concert_overview_capacity = StringVar()
@@ -59,127 +65,62 @@ concert_overview_availability = StringVar()
 concert_overview_cost = StringVar()
 
 concert_name_lbl = Label(root, textvariable=concert_overview_name, justify=LEFT)
-concert_name_lbl.grid(row=1, column = 0)
+concert_name_lbl.grid(row=2, column = 0)
 
 concert_capacity_lbl = Label(root, textvariable=concert_overview_capacity, justify=RIGHT)
-concert_capacity_lbl.grid(row=1, column = 1)
+concert_capacity_lbl.grid(row=2, column = 1)
 
 concert_availability_lbl = Label(root, textvariable=concert_overview_availability, justify=RIGHT)
-concert_availability_lbl.grid(row=1, column = 2)
+concert_availability_lbl.grid(row=2, column = 2)
 
 concert_cost_lbl = Label(root, textvariable=concert_overview_cost, justify=RIGHT)
-concert_cost_lbl.grid(row=1, column = 3)
+concert_cost_lbl.grid(row=2, column = 3)
 
 #####################
-#set up the drop down menu
+#set up the whole drop down menu
 
-def select_concert():
-    text_selected = selected_concert.get()
-    concert_name.set(text_selected)
+def order_tickets():
+    tickets_sold = StringVar()
+    concert_name.set(selected_concert.get())
+    tickets_sold.set(tickets_entry_field.get())
+
     
-
-    concert_cost = StringVar()
 
     for c in concerts:
         if concert_name.get() == c._name:
             concert_cost.set(str(c._cost))
     combined_output.set(concert_name.get() + "   $" + concert_cost.get())
 
+#sub headings
+tickets_sub_title = Label(root, text="Tickets", font="avenir 10 bold").grid(row=3, column=1)
 
+
+#physical drop down menu
 selected_concert = StringVar()
 selected_concert.set(concert_names[0])
 
 concert_menu = OptionMenu(root, selected_concert, *concert_names)
-concert_menu.grid(row=2)
+concert_menu.grid(row=4)
+
+#entry field for ticket count
+
+#NEED TO PUT A TEXTVARIABLE IN THERE
+tickets_entry_field = Entry(root, width=6).grid(row=4, column=1)
 
 #enter button
-button_enter = Button(root, text="OK-GO", width=10, font="avenir", command=select_concert).grid(row=3, column=0)
+button_tickets = Button(root, text="OK-GO", width=10, font="avenir", command=order_tickets).grid(row=4, column=2)
 
 #dynamic label
 
 combined_output = StringVar()
 combined_output.set("---Not Selected---")
-combined_output_lbl = Label(root, textvariable=combined_output, font="avenir 14").grid(row=4)
+combined_output_lbl = Label(root, textvariable=combined_output, font="avenir 14").grid(row=6)
 
 concert_name = StringVar()
-'''
-#################################################################
-#add a new object and display
-
-#function
-def add_new_concert():
-    global concert_menu
-
-    if new_name.get() !="Enter concert Name" and new_cost.get() != "Cost":
-        concert(new_name.get(), new_cost.get()) #add info into the Object Orientation Class
-        update_concert_overview() #update the concert overview label
-
-        concert_menu.grid_forget() #delete the drop down menu
-        concert_menu = OptionMenu(root, selected_concert, *concert_names) #reinstate the drop down menu
-        concert_menu.grid(row=1)
-
-new_name = StringVar()
-new_cost = StringVar() #for various reasons....
-
-new_name.set("Enter concert Name")
-new_cost.set("Cost")
-
-add_new_title_seperator_lbl = Label(root, text="---------------------------------------------------", font="avenir 12").grid(row=4)
-add_new_title_lbl = Label(root, text="Add a new concert", font="avenir 16 bold").grid(row=5)
-
-new_title_name_entry = Entry(root, textvariable = new_name, width=20).grid(row=6, column=0)
-new_title_cost_entry = Entry(root, textvariable = new_cost, width=6 ).grid(row=6, column=1)
-
-new_title_button = Button(root, text="OK-GO", width=10, font="avenir", command=add_new_concert).grid(row=6, column=2)
-
 
 #################################################################
-#edit / update a new object and display
-
-#FUNCTION
-def edit_concert():
-    global concert_menu
-
-    if edit_name.get() !="Enter concert Name" and edit_cost.get() != "Cost":
-        concert(edit_name.get(), edit_cost.get()) #add info into the Object Orientation Class
-        update_concert_overview() #update the concert overview label
-
-        concert_menu.grid_forget() #delete the drop down menu
-        concert_menu = OptionMenu(root, selected_concert, *concert_names) #reinstate the drop down menu
-        concert_menu.grid(row=1)
-
-#UNDYNAMIC LABELS
-
-edit_title_seperator_lbl = Label(root, text="---------------------------------------------------", font="avenir 12").grid(row=7)
-edit_title_lbl = Label(root, text="Update a concert's info", font="avenir 16 bold").grid(row=8)
-
-#DROP DOWN
-selected_concert_edit = StringVar()
-selected_concert_edit.set(concert_names[0])
-
-concert_menu_edit = OptionMenu(root, selected_concert_edit, *concert_names)
-concert_menu_edit.grid(row=9)
-edit_title_button = Button(root, text="OK-GO", width=10, font="avenir", command=edit_concert).grid(row=9, column=2)
 
 
-#ENTRY FIELDS
-edit_name = StringVar()
-edit_cost = StringVar() #for various reasons....
-
-edit_name.set("New concert Name")
-edit_cost.set("New $")
-
-
-
-edit_name_entry = Entry(root, textvariable = edit_name, width=20).grid(row=10, column=0)
-edit_cost_entry = Entry(root, textvariable = edit_cost, width=6 ).grid(row=10, column=1)
-
-edit_title_button = Button(root, text="OK-GO", width=10, font="avenir", command=edit_concert).grid(row=10, column=2)
-
-
-
-
-'''
 #########################
 update_concert_overview()
 
