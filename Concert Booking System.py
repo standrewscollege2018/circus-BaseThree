@@ -1,7 +1,7 @@
 #Benoit Wynn-Williams
 #03 / 08 / 18 (START)
 
-### Concert Tickets####
+### Concert Tickets###
 
 #################
 #create TK window               (root can be called anything)
@@ -47,6 +47,13 @@ def update_concert_overview():
         concert_overview_availability.set(concert_overview_availability.get() + str(c._availability) + "\n")
         concert_overview_cost.set(concert_overview_cost.get() + "$" + str(c._cost) + "\n")
 
+#ticket summary for the day
+ticket_summary_lbl = Label(root, text="Ticket Summary", font="avenir 16 bold", justify=LEFT)
+tickets_sold_today_lbl = Label(root, text="Tickets sold today:", font="avenir 12", justify=LEFT)
+profit_made_today_lbl  = Label(root, text="Earnings today:", font="avenir 12", justify=LEFT)
+
+
+
 ###################
 #title label
 concert_name_lbl = Label(root, text="Current Concerts", font="avenir 16 bold", justify=LEFT)
@@ -80,16 +87,16 @@ concert_cost_lbl.grid(row=2, column = 3)
 #set up the whole drop down menu
 
 def order_tickets():
-    tickets_sold = StringVar()
     concert_name.set(selected_concert.get())
-    tickets_sold.set(tickets_entry_field.get())
-
     
 
     for c in concerts:
         if concert_name.get() == c._name:
-            concert_cost.set(str(c._cost))
-    combined_output.set(concert_name.get() + "   $" + concert_cost.get())
+            c._availability = c._availability - tickets_entered.get()
+
+    order_confirmation.set(str(tickets_entered.get()) + " ticket(s) ordered for \n'" + concert_name.get() + "' \n at $" + "each. Total")
+
+    update_concert_overview()
 
 #sub headings
 tickets_sub_title = Label(root, text="Tickets", font="avenir 10 bold").grid(row=3, column=1)
@@ -103,18 +110,18 @@ concert_menu = OptionMenu(root, selected_concert, *concert_names)
 concert_menu.grid(row=4)
 
 #entry field for ticket count
-
-#NEED TO PUT A TEXTVARIABLE IN THERE
-tickets_entry_field = Entry(root, width=6).grid(row=4, column=1)
+tickets_entered = IntVar()
+tickets_entered.set(0)
+tickets_entry_field = Entry(root, textvariable = tickets_entered, width=6).grid(row=4, column=1)
 
 #enter button
 button_tickets = Button(root, text="OK-GO", width=10, font="avenir", command=order_tickets).grid(row=4, column=2)
 
 #dynamic label
 
-combined_output = StringVar()
-combined_output.set("---Not Selected---")
-combined_output_lbl = Label(root, textvariable=combined_output, font="avenir 14").grid(row=6)
+order_confirmation = StringVar()
+order_confirmation.set("---Not Selected---")
+order_confirmation_lbl = Label(root, textvariable=order_confirmation, font="avenir 14").grid(row=6)
 
 concert_name = StringVar()
 
