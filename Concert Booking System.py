@@ -97,14 +97,13 @@ def order_tickets():
             concert_cost.set(c._cost)
     
     ticket_order_total_cost = concert_cost.get() * tickets_entered.get()
-    
     order_confirmation.set(str(tickets_entered.get()) + " ticket(s) ordered for \n'" + concert_name.get() + "' \n at $" + str(concert_cost.get()) + " each. Total $" + str(ticket_order_total_cost))
 
-    global tickets_sold_today, earnings_today
+    global tickets_sold_today, earnings_today #global variables
+    
     tickets_sold_today = tickets_sold_today + tickets_entered.get()
     earnings_today     = earnings_today     + ticket_order_total_cost
-    print(tickets_sold_today)
-    print(tickets_entered.get())
+    
     update_concert_overview() #update the overview label
     ticket_summary()          #update the tickets summary
 
@@ -144,15 +143,25 @@ def ticket_summary():
     tickets_sold.set("Tickets sold today:   " + str(tickets_sold_today))
     profit_made.set("Earnings today:      $" + str(earnings_today))
 
-
-
-
 #ticket summary for the day
 ticket_summary_seperator_lbl = Label(root, text="------------------------------------", pady=10).grid(row=9, column = 0, columnspan=2, sticky=W)
 
 ticket_summary_lbl = Label(root, text="Ticket Summary",    font="avenir 16 bold").grid(row=10, column = 0, columnspan=2, sticky=W)
 tickets_sold_today_lbl = Label(root, textvariable=tickets_sold, font="avenir 12").grid(row=11, column = 0, sticky=W)
 profit_made_today_lbl  = Label(root, textvariable=profit_made,  font="avenir 12").grid(row=12, column = 0, sticky=W)
+
+#####################
+#reseting the day
+
+def reset_today():
+    global tickets_sold_today, earnings_today #global variables
+    tickets_sold_today = 0
+    earnings_today = 0
+    ticket_summary() #reload the summary label
+
+reset_day_seperator = Label(root, text="------------------------------------", pady=15).grid(row=19, column = 0, columnspan=2, sticky=W)
+
+reset_day_lbl = Button(root, text="RESET", font="avenir 14 bold", fg="red", bg="black", pady=5, command=reset_today).grid(row=20, column = 0, columnspan=1, sticky=W)
 
 
 
