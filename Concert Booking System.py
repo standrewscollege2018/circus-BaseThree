@@ -47,13 +47,6 @@ def update_concert_overview():
         concert_overview_availability.set(concert_overview_availability.get() + str(c._availability) + "\n")
         concert_overview_cost.set(concert_overview_cost.get() + "$" + str(c._cost) + "\n")
 
-#ticket summary for the day
-ticket_summary_lbl = Label(root, text="Ticket Summary", font="avenir 16 bold", justify=LEFT)
-tickets_sold_today_lbl = Label(root, text="Tickets sold today:", font="avenir 12", justify=LEFT)
-profit_made_today_lbl  = Label(root, text="Earnings today:", font="avenir 12", justify=LEFT)
-
-
-
 ###################
 #title label
 concert_name_lbl = Label(root, text="Current Concerts", font="avenir 16 bold", justify=LEFT)
@@ -86,17 +79,34 @@ concert_cost_lbl.grid(row=2, column = 3)
 #####################
 #set up the whole drop down menu
 
+#variables to store TODAY's sale information
+
+tickets_sold_today = 0
+earnings_today = 0
+
+#function to order tickets
 def order_tickets():
-    concert_name.set(selected_concert.get())
     
+    concert_name.set(selected_concert.get())
+    concert_cost = IntVar()
+    concert_cost.set(0)
 
     for c in concerts:
         if concert_name.get() == c._name:
             c._availability = c._availability - tickets_entered.get()
+            concert_cost.set(c._cost)
+    
+    ticket_order_total_cost = concert_cost.get() * tickets_entered.get()
+    
+    order_confirmation.set(str(tickets_entered.get()) + " ticket(s) ordered for \n'" + concert_name.get() + "' \n at $" + str(concert_cost.get()) + " each. Total $" + str(ticket_order_total_cost))
 
-    order_confirmation.set(str(tickets_entered.get()) + " ticket(s) ordered for \n'" + concert_name.get() + "' \n at $" + "each. Total")
-
-    update_concert_overview()
+    global tickets_sold_today, earnings_today
+    tickets_sold_today = tickets_sold_today + tickets_entered.get()
+    earnings_today     = earnings_today     + ticket_order_total_cost
+    print(tickets_sold_today)
+    print(tickets_entered.get())
+    update_concert_overview() #update the overview label
+    ticket_summary()          #update the tickets summary
 
 #sub headings
 tickets_sub_title = Label(root, text="Tickets", font="avenir 10 bold").grid(row=3, column=1)
@@ -120,16 +130,36 @@ button_tickets = Button(root, text="OK-GO", width=10, font="avenir", command=ord
 #dynamic label
 
 order_confirmation = StringVar()
-order_confirmation.set("---Not Selected---")
+order_confirmation.set("---Not Selected--- \n\n")
 order_confirmation_lbl = Label(root, textvariable=order_confirmation, font="avenir 14").grid(row=6)
 
 concert_name = StringVar()
 
 #################################################################
+#text variables for labels
+
+tickets_sold = StringVar()
+profit_made = StringVar()
+def ticket_summary():
+    tickets_sold.set("Tickets sold today:   " + str(tickets_sold_today))
+    profit_made.set("Earnings today:      $" + str(earnings_today))
 
 
-#########################
+
+
+#ticket summary for the day
+ticket_summary_seperator_lbl = Label(root, text="------------------------------------", pady=10).grid(row=9, column = 0, columnspan=2, sticky=W)
+
+ticket_summary_lbl = Label(root, text="Ticket Summary",    font="avenir 16 bold").grid(row=10, column = 0, columnspan=2, sticky=W)
+tickets_sold_today_lbl = Label(root, textvariable=tickets_sold, font="avenir 12").grid(row=11, column = 0, sticky=W)
+profit_made_today_lbl  = Label(root, textvariable=profit_made,  font="avenir 12").grid(row=12, column = 0, sticky=W)
+
+
+
+
+#################################################################
 update_concert_overview()
+ticket_summary()
 
 #this is needed at the end
 root.mainloop()
