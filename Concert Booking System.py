@@ -1,5 +1,6 @@
 #Benoit Wynn-Williams
 #03 / 08 / 18 (START)
+#07 / 08 / 18 (FINISH) (expected inputs only)
 
 ### Concert Tickets###
 
@@ -157,7 +158,16 @@ def reset_today():
     global tickets_sold_today, earnings_today #global variables
     tickets_sold_today = 0
     earnings_today = 0
+
+    for c in concerts:
+        c._availability = c._capacity
+    
     ticket_summary() #reload the summary label
+    update_concert_overview() #reload the overview label
+
+
+    
+        
 
 reset_day_seperator = Label(root, text="------------------------------------", pady=15).grid(row=19, column = 0, columnspan=2, sticky=W)
 
