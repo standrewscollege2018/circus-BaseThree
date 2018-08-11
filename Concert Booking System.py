@@ -87,26 +87,50 @@ earnings_today = 0
 
 #function to order tickets
 def order_tickets():
-    
-    concert_name.set(selected_concert.get())
-    concert_cost = IntVar()
-    concert_cost.set(0)
 
-    for c in concerts:
-        if concert_name.get() == c._name:
-            c._availability = c._availability - tickets_entered.get()
-            concert_cost.set(c._cost)
+    #test for valid input
+    order_error.set("\n\n")
     
-    ticket_order_total_cost = concert_cost.get() * tickets_entered.get()
-    order_confirmation.set(str(tickets_entered.get()) + " ticket(s) ordered for \n'" + concert_name.get() + "' \n at $" + str(concert_cost.get()) + " each. Total $" + str(ticket_order_total_cost))
+    try:
+        tickets_entered.set(int(tickets_entered.get()))
 
-    global tickets_sold_today, earnings_today #global variables
+        if tickets_entered.get() == 0:
+            order_error.set("Error: 'Tickets' is equal to 0\n\n")
+        
+        elif tickets_entered.get() < 0:
+            order_error.set("Error: 'Tickets' is negative\n\n")
+                    
+        #if input is valid    
+        else:
+            concert_name.set(selected_concert.get())
+            concert_cost = IntVar()
+            concert_cost.set(0)
+
+            for c in concerts:
+                if concert_name.get() == c._name:
+                    #check tickets against capacity
+                    if c._availability <= tickets_entered.get():
+                        order_error.set("Error: 'Tickets' > 'Capacity' \n\n")
+                    else:
+                        c._availability = c._availability - tickets_entered.get()
+                        concert_cost.set(c._cost)
+
+                        #update order confirmation
+                        ticket_order_total_cost = concert_cost.get() * tickets_entered.get()
+                        order_confirmation.set(str(tickets_entered.get()) + " ticket(s) ordered for \n'" + concert_name.get() + "' \n at $" + str(concert_cost.get()) + " each. Total $" + str(ticket_order_total_cost))
+
+            global tickets_sold_today, earnings_today #global variables
+            
+            tickets_sold_today = tickets_sold_today + tickets_entered.get()
+            earnings_today     = earnings_today     + ticket_order_total_cost
+            
+            update_concert_overview() #update the overview label
+            ticket_summary()          #update the tickets summary
+    except:
+        order_error.set("Error: 'Tickets' is not an integer\n\n")
+
     
-    tickets_sold_today = tickets_sold_today + tickets_entered.get()
-    earnings_today     = earnings_today     + ticket_order_total_cost
-    
-    update_concert_overview() #update the overview label
-    ticket_summary()          #update the tickets summary
+ 
 
 #sub headings
 tickets_sub_title = Label(root, text="Tickets", font="avenir 10 bold").grid(row=3, column=1)
@@ -127,11 +151,17 @@ tickets_entry_field = Entry(root, textvariable = tickets_entered, width=6).grid(
 #enter button
 button_tickets = Button(root, text="OK-GO", width=10, font="avenir", command=order_tickets).grid(row=4, column=2)
 
-#dynamic label
+#dynamic label, displays info about the bokking
 
 order_confirmation = StringVar()
 order_confirmation.set("---Not Selected--- \n\n")
 order_confirmation_lbl = Label(root, textvariable=order_confirmation, font="avenir 14").grid(row=6)
+
+#error Messages :)
+
+order_error = StringVar()
+order_error.set("\n\n")
+order_error_lbl = Label(root, textvariable=order_error, font="avenir 14", fg="red").grid(row=6, column=1, columnspan=3, sticky=W)
 
 concert_name = StringVar()
 
@@ -164,6 +194,8 @@ def reset_today():
     
     ticket_summary() #reload the summary label
     update_concert_overview() #reload the overview label
+    order_error.set("\n\n") #reset the error
+    order_confirmation.set("---Not Selected--- \n\n") #reset the order confirmation
 
 
     
